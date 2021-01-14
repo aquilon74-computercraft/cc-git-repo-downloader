@@ -1,3 +1,13 @@
+if not fs.exists("/lib/json") then
+    print("json library missing, installing...")
+    local raw = http.get("https://pastebin.com/raw/4nRg9CHU").readAll()
+    fs.open("/lib/json", "w")
+    fs.write(raw)
+    fs.close()
+
+    print("installation complete.")
+end
+
 os.loadAPI("/lib/json")
 
 local function requests(url)

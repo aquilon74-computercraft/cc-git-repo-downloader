@@ -2,12 +2,7 @@ os.loadAPI("/lib/json")
 
 local function requests(url)
     local handle = http.get(url)
-    local result = ""
-
-    for chunk in handle do 
-        result = result..chunk 
-    end
-
+    local result = handle.readAll()
     return result
 end
 

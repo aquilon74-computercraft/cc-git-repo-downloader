@@ -16,14 +16,28 @@ local function requests(url)
     return result
 end
 
-local function get_files_paths(owner, repo)
-    r = requests("https://api.github.com/repos/"..owner.."/"..repo.."/contents")
+local function get_files_paths(owner, repo, path)
+    local url = ""
+    if path then
+        url = "https://api.github.com/repos/"..owner.."/"..repo.."/contents/"..path
+    else
+        url = "https://api.github.com/repos/"..owner.."/"..repo.."/contents/"
+    end
+
+    r = requests(url)
     
     local data = json.decode(r)
     local paths = {}
 
     for k, v in pairs(data) do
-        paths[#paths+1] = v.path
+        if v.type == "dir" then
+            local recPaths = get_files_paths(owner, repo, v.path)
+            for reck, recv in pairs(recPaths) do
+                paths[#paths+1] = recv
+            end
+        else
+            paths[#paths+1] = v.path
+        end
     end
 
     return paths
